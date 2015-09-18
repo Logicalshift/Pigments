@@ -3,6 +3,11 @@
 //
 
 module Pigment {
+    var pow = Math.pow;
+
+    export var defaultDecodingGamma = 2.2;
+    export var defaultEncodingGamma = 1/defaultDecodingGamma;
+
     //
     // Returns the result of translating the specified value using the basic gamma function
     //
@@ -16,8 +21,11 @@ module Pigment {
     // until it's time to actually generate an RGB hex value. This function is used to convert from these
     // linear values to the non-linear values used by the tool.
     //
-    // Most computer displays are calibrated with a gamma factor of 1.2.
+    // Most computer displays are calibrated with a gamma factor of 2.2: this is the factor used to convert
+    // from the value of the colour on screen to the linear value. To convert the other way - the typical
+    // case when using this library - the inverse value should be used, that is 1/2.2 or ~0.45.
     //
-    function gamma(value: number, factor: number) {
+    export function gamma(value: number, factor: number) {
+        return pow(value, factor);
     }
 }
