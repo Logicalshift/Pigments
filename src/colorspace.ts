@@ -3,6 +3,8 @@
 //
 
 module Pigment {
+    var max = Math.max;
+
     //
     // Represents a color space
     //
@@ -126,12 +128,16 @@ module Pigment {
         }
     
         decode(emit: EmissiveColor) {
-            var cyan    = 1-clamp(emit.red);
-            var magenta = 1-clamp(emit.green);
-            var yellow  = 1-clamp(emit.blue);
+            var cyan: number, magenta: number, yellow: number;
+            var key     = 1-max(clamp(emit.red), clamp(emit.green), clamp(emit.blue));
 
-            // TODO: can use key to set one (the lowest) of the CMYK values to 0
-            var key     = 0;
+            if (key < 1.0) {
+                cyan    = 1-(clamp(emit.red)/(1-key));
+                magenta = 1-(clamp(emit.green)/(1-key));
+                yellow  = 1-(clamp(emit.blue)/(1-key));
+            } else {
+                cyan = magenta = yellow = 0;
+            }
 
             return {
                 cyan:       cyan,
