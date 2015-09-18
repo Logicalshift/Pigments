@@ -82,6 +82,9 @@ module Pigment {
                 return 0;
             }
 
+            // Distributes the 'extra' light caused by oversaturating a color
+            // TODO: it would be nice if we distribute too much color to a component to
+            // distribute the remainder to the remaining component.
             this.encode = value => {
                 var redOver     = oversaturation(value.red);
                 var greenOver   = oversaturation(value.green);
