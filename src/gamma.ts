@@ -9,7 +9,8 @@ module Pigment {
     export var defaultEncodingGamma = 1/defaultDecodingGamma;
 
     //
-    // 
+    // Represents a gamma correction function, which converts either from a linear to a non-linear value
+    // or vice versa.
     //
     export interface GammaFunction {
         (value: number): number;
