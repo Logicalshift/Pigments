@@ -164,6 +164,17 @@ module Pigment {
     }
 
     //
+    // Creates a colorspace that converts types the other way (for example, changing the CMYK -> RGB
+    // colorspace into a RGB -> CMYK colorspace)
+    //
+    export function reverseColorSpace<TSource, TDest>(toReverse: ColorSpace<TDest, TSource>) {
+        return {
+            encode: toReverse.decode,
+            decode: toReverse.encode
+        };
+    }
+
+    //
     // Represents the default colorspace that is used most often
     //
     export var defaultColorSpace: ColorSpace<EmissiveColor, EmissiveColor> = chainColorSpaces(new SaturatingColorSpace(), new ScreenColorSpace());
