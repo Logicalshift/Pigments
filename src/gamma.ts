@@ -9,6 +9,13 @@ module Pigment {
     export var defaultEncodingGamma = 1/defaultDecodingGamma;
 
     //
+    // 
+    //
+    export interface GammaFunction {
+        (value: number) -> number;
+    }
+
+    //
     // Returns the result of translating the specified value using the basic gamma function
     //
     // Most values we use have a linear response to make calculations easier: however, computer displays
@@ -27,5 +34,12 @@ module Pigment {
     //
     export function gamma(value: number, factor: number) {
         return pow(value, factor);
+    }
+
+    //
+    // Creates a simple gamma function with a particular factor
+    //
+    export function createGammaFunction(factor: number) : GammaFunction {
+        return value => pow(value, factor);
     }
 }
