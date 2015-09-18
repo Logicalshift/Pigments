@@ -114,9 +114,9 @@ module Pigment {
             var green   = 1-clamp(reflect.magenta);
             var blue    = 1-clamp(reflect.yellow);
 
-            red     *= reflect.key;
-            green   *= reflect.key;
-            blue    *= reflect.key;
+            red     *= 1-reflect.key;
+            green   *= 1-reflect.key;
+            blue    *= 1-reflect.key;
 
             return {
                 red:    red,
