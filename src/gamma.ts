@@ -12,7 +12,7 @@ module Pigment {
     // 
     //
     export interface GammaFunction {
-        (value: number) -> number;
+        (value: number): number;
     }
 
     //

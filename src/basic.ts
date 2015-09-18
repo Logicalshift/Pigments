@@ -24,8 +24,10 @@ module Pigment {
         blue: number;
     };
 
-    export class EmmisiveColor implements EmmisiveColor {
-
+    export class RgbColor implements EmissiveColor {
+        red: number;
+        green: number;
+        blue: number;
     };
 
     //
