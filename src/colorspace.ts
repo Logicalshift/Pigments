@@ -40,7 +40,7 @@ module Pigment {
     // value of 2 will be clamped to 1, meaning that it looks no different.
     //
     export class ScreenColorSpace implements ColorSpace<EmissiveColor, EmissiveColor> {
-        ScreenColorSpace(encodeGamma: GammaFunction, decodeGamma: GammaFunction) {
+        constructor(encodeGamma: GammaFunction, decodeGamma: GammaFunction) {
             encodeGamma = encodeGamma || createGammaFunction(defaultEncodingGamma);
             decodeGamma = decodeGamma || createGammaFunction(defaultDecodingGamma);
 
@@ -72,7 +72,7 @@ module Pigment {
     // For example, a red value of 2 will distribute 0.5 units to blue and green.
     //
     export class SaturatingColorSpace implements ColorSpace<EmissiveColor, EmissiveColor> {
-        SaturatingColorSpace() {
+        constructor() {
             // Decoding goes straight through (we can't meaningfully reverse this transformation)
             this.decode = value => value;
 
@@ -100,5 +100,45 @@ module Pigment {
 
         encode: (EmissiveColor) => EmissiveColor;
         decode: (EmissiveColor) => EmissiveColor;
-    }
+    };
+
+    //
+    // A color space that performs simple CMYK -> RGB translation
+    //
+    export class SimpleCmykColorSpace implements ColorSpace<ReflectiveColor, EmissiveColor> {
+        constructor() {
+        }
+
+        encode(reflect: ReflectiveColor) {
+            var red     = 1-clamp(reflect.cyan);
+            var green   = 1-clamp(reflect.magenta);
+            var blue    = 1-clamp(reflect.yellow);
+
+            red     *= reflect.key;
+            green   *= reflect.key;
+            blue    *= reflect.key;
+
+            return {
+                red:    red,
+                green:  green,
+                blue:   blue
+            };
+        }
+    
+        decode(emit: EmissiveColor) {
+            var cyan    = 1-clamp(emit.red);
+            var magenta = 1-clamp(emit.green);
+            var yellow  = 1-clamp(emit.blue);
+
+            // TODO: can use key to set one (the lowest) of the CMYK values to 0
+            var key     = 0;
+
+            return {
+                cyan:       cyan,
+                magenta:    magenta,
+                yellow:     yellow,
+                key:        key
+            };
+        }
+    };
 }

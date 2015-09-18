@@ -46,22 +46,22 @@ module Pigment {
     //
     export interface ReflectiveColor {
         //
-        // Represents the portion of red light that is reflected by this material (0-1)
+        // Represents the portion of red light that is absorbed by this material (0-1)
         //
         cyan: number;
 
         //
-        // Represents the portion of green light that is reflected by this material (0-1)
+        // Represents the portion of green light that is absorbed by this material (0-1)
         //
         magenta: number;
 
         //
-        // Represents the portion of yellow light that is reflected by this material (0-1)
+        // Represents the portion of yellow light that is absorbed by this material (0-1)
         //
         yellow: number;
 
         //
-        // Represents the amount of light in general that's reflected by this material (0-1)
+        // Represents the amount of light in general that's absorbed by this material (0-1)
         //
         key: number;
     };
