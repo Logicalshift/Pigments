@@ -40,7 +40,7 @@ module Pigment {
     // value of 2 will be clamped to 1, meaning that it looks no different.
     //
     export class ScreenColorSpace implements ColorSpace<EmissiveColor, EmissiveColor> {
-        constructor(encodeGamma: GammaFunction, decodeGamma: GammaFunction) {
+        constructor(encodeGamma?: GammaFunction, decodeGamma?: GammaFunction) {
             encodeGamma = encodeGamma || createGammaFunction(defaultEncodingGamma);
             decodeGamma = decodeGamma || createGammaFunction(defaultDecodingGamma);
 
@@ -141,4 +141,29 @@ module Pigment {
             };
         }
     };
+
+    //
+    // Creates a new colorspace by chaining two existing colorspaces together
+    //
+    export function chainColorSpaces<TSource, TIntermediate, TDest>(first: ColorSpace<TSource, TIntermediate>, second: ColorSpace<TIntermediate, TDest>) : ColorSpace<TSource, TDest> {
+        return {
+            encode: value => {
+                return second.encode(first.encode(value));
+            },
+
+            decode: value => {
+                return first.decode(second.decode(value));
+            }
+        };
+    }
+
+    //
+    // Represents the default colorspace that is used most often
+    //
+    export var defaultColorSpace: ColorSpace<EmissiveColor, EmissiveColor> = chainColorSpaces(new SaturatingColorSpace(), new ScreenColorSpace());
+
+    //
+    // Represents a simple but not particularly accurate way to convert from CMYK to screen colors
+    //
+    export var defaultCmykColorSpace: ColorSpace<ReflectiveColor, EmissiveColor> = chainColorSpaces(new SimpleCmykColorSpace(), defaultColorSpace);
 }
