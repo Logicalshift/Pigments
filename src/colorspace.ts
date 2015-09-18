@@ -21,6 +21,15 @@ module Pigment {
     };
 
     //
+    // Clamps a value to the range 0-1
+    //
+    function clamp(value: number) {
+        if (value < 0.0) return 0.0;
+        if (value > 1.0) return 1.0;
+        return value;
+    }
+
+    //
     // Convets to and from a screen color space
     //
     // This applies gamma correction and clamps the values to a 0-1 range to generate a final color.
@@ -34,12 +43,6 @@ module Pigment {
         ScreenColorSpace(encodeGamma: GammaFunction, decodeGamma: GammaFunction) {
             encodeGamma = encodeGamma || createGammaFunction(defaultEncodingGamma);
             decodeGamma = decodeGamma || createGammaFunction(defaultDecodingGamma);
-
-            function clamp(value: number) {
-                if (value < 0.0) return 0.0;
-                if (value > 1.0) return 1.0;
-                return value;
-            }
 
             this.encode = value => {
                 return {
@@ -61,4 +64,38 @@ module Pigment {
         encode: (EmissiveColor) => EmissiveColor;
         decode: (EmissiveColor) => EmissiveColor;
     };
+
+    //
+    // A color space that deals with oversaturated color components by distributing the 'extra' light to other
+    // components.
+    //
+    // For example, a red value of 2 will distribute 0.5 units to blue and green.
+    //
+    export class SaturatingColorSpace implements ColorSpace<EmissiveColor, EmissiveColor> {
+        SaturatingColorSpace() {
+            // Decoding goes straight through (we can't meaningfully reverse this transformation)
+            this.decode = value => value;
+
+            // Returns the amount of oversaturation in a particular value
+            function oversaturation(value: number) {
+                if (value > 1.0) return value-1.0;
+                return 0;
+            }
+
+            this.encode = value => {
+                var redOver     = oversaturation(value.red);
+                var greenOver   = oversaturation(value.green);
+                var blueOver    = oversaturation(value.blue);
+
+                return {
+                    red:    clamp(value.red-redOver     + (greenOver*0.5 + blueOver*0.5)),
+                    green:  clamp(value.green-greenOver + (redOver*0.5 + blueOver*0.5)),
+                    blue:   clamp(value.blue-blueOver   + (redOver*0.5 + greenOver*0.5))
+                };
+            }
+        }
+
+        encode: (EmissiveColor) => EmissiveColor;
+        decode: (EmissiveColor) => EmissiveColor;
+    }
 }
