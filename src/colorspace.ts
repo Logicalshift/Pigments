@@ -4,6 +4,8 @@
 
 module Pigment {
     var max = Math.max;
+    var min = Math.min;
+    var abs = Math.abs;
 
     //
     // Represents a color space
@@ -144,6 +146,82 @@ module Pigment {
                 magenta:    magenta,
                 yellow:     yellow,
                 key:        key
+            };
+        }
+    };
+
+    //
+    // Basic conversion from the HSV to the RGB color space
+    //
+    export class SimpleHsvColorSpace implements ColorSpace<HsvColor, EmissiveColor> {
+        constructor() {
+        }
+
+        encode(hsv: HsvColor) {
+            var h = abs(hsv.hue % 360);
+            var s = clamp(hsv.saturation);
+            var v = clamp(hsv.value);
+
+            var c = s * v;
+            var x = c * (1-abs((h/60) % 2 - 1));
+            var m = v - c;
+
+            var ra = 0;
+            var ga = 0;
+            var ba = 0;
+
+            if (h < 60) {
+                ra = c; ga = x;
+            } else if (h < 120) {
+                ra = x; ga = c;
+            } else if (h < 180) {
+                ga = c; ba = x;
+            } else if (h < 240) {
+                ga = x; ba = c;
+            } else if (h < 300) {
+                ra = x; ba = c;
+            } else /* if (h < 360) */ {
+                ra = c; ba = x;
+            }
+
+            return {
+                red: ra + m,
+                green: ga + m,
+                blue: ba + m
+            };
+        }
+
+        decode(rgb: EmissiveColor) {
+            var r = clamp(rgb.red);
+            var g = clamp(rgb.green);
+            var b = clamp(rgb.blue);
+
+            var cmax = max(r, g, b);
+            var cmin = min(r, g, b);
+
+            var delta = cmin-cmax;
+
+            var h = 0;
+
+            if (delta > 0) {
+                if (cmax === r) {
+                    h = 60 * (((g-b)/delta)%6);
+                } else if (cmax === g) {
+                    h = 60 * (((b-r)/delta)+2);
+                } else if (cmax === b) {
+                    h = 60 * (((r-g)/delta)+4);
+                }
+            }
+
+            var s = 0;
+            if (cmax > 0) {
+                s = delta / cmax;
+            }
+
+            return {
+                hue: h,
+                saturation: s,
+                value: cmax
             };
         }
     };

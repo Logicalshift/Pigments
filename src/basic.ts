@@ -65,4 +65,24 @@ module Pigment {
         //
         key: number;
     };
+
+    //
+    // Represents a color as a hue, saturation, value triplet
+    //
+    export interface HsvColor {
+        //
+        // The hue, as an angle from 0-360
+        //
+        hue: number;
+
+        //
+        // The saturation of this color (0-1)
+        //
+        saturation: number;
+
+        //
+        // The value of this color (0-1)
+        //
+        value: number;
+    };
 }
