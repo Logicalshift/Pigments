@@ -261,4 +261,9 @@ module Pigment {
     // Represents a simple but not particularly accurate way to convert from CMYK to screen colors
     //
     export var defaultCmykColorSpace: ColorSpace<ReflectiveColor, EmissiveColor> = chainColorSpaces(new SimpleCmykColorSpace(), defaultColorSpace);
+
+    //
+    // Represents a way to convert HSV colours to screen colours
+    //
+    export var defaultHsvColorSpace: ColorSpace<HsvColor, EmissiveColor> = chainColorSpaces(new SimpleHsvColorSpace(), defaultColorSpace);
 }
